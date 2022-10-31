@@ -121,7 +121,7 @@ class slidePuzzle {
         }
         slidePuzzle goDown(slidePuzzle dPuzzle) 
         {
-			if(dPuzzle.zero.first != dPuzzle.puzzle.size() - 1) //makes sure that zero is not already in the bottom row
+			if(dPuzzle.zero.first != dPuzzle.puzzle.size() - 1) //makes sure that zero is not already in the bottom row// NOTE: could be set to 3 but having it as this allows for easier adjustment for bigger puzzles
 			{
 				string temp = dPuzzle.puzzle.at(dPuzzle.zero.first + 1).at(dPuzzle.zero.second); //creates temp value for value directly BELOW zero
 				dPuzzle.puzzle.at(dPuzzle.zero.first + 1).at(dPuzzle.zero.second) = "0"; //moves zero down
@@ -133,12 +133,12 @@ class slidePuzzle {
         }
         slidePuzzle goLeft(slidePuzzle lPuzzle) 
         {
-			if (lPuzzle.zero.second != 0) 
+			if (lPuzzle.zero.second != 0) //makes sure that zero is not already in the leftmost position
             {
-                string temp = lPuzzle.puzzle.at(my_puzzle.zero.first).at(lPuzzle.zero.second - 1);
-                lPuzzle.puzzle.at(lPuzzle.zero.first).at(lPuzzle.zero.second - 1) = "0";
-                lPuzzle.puzzle.at(lPuzzle.zero.first).at(lPuzzle.zero.second) = temp;
-                lPuzzle.zero.second = lPuzzle.zero.second - 1;
+                string temp = lPuzzle.puzzle.at(lPuzzle.zero.first).at(lPuzzle.zero.second - 1); //creates temp of value to left of zero
+                lPuzzle.puzzle.at(lPuzzle.zero.first).at(lPuzzle.zero.second - 1) = "0"; //moves zero to left
+                lPuzzle.puzzle.at(lPuzzle.zero.first).at(lPuzzle.zero.second) = temp; //moves temp to zero's previous position
+                lPuzzle.zero.second = lPuzzle.zero.second - 1; //updates current position of zero
             }
 
 			
@@ -146,6 +146,13 @@ class slidePuzzle {
         }
         slidePuzzle goRight(slidePuzzle rPuzzle) 
         {
+			if(rPuzzle.zero.second != rPuzzle.puzzle.size() - 1) //makes sure that zero is not in rightmost position
+			{
+				string temp = rPuzzle.puzzle.at(rPuzzle.zero.first).at(rPuzzle.zero.second + 1); //creates temp of value to right of zero
+				rPuzzle.puzzle.at(rPuzzle.zero.first).at(rPuzzle.zero.second + 1) = "0"; //moves zero to right
+				rPuzzle.puzzle.at(rPuzzle.zero.first).at(rPuzzle.zero.second) = temp; //moces temp to zero's previous position
+				rPuzzle.zero.second = rPuzzle.zero.second + 1; //updates current position of zero
+			}
 			
 			return rPuzzle;
         }
@@ -181,4 +188,3 @@ bool isGoal(const slidePuzzle &currentNode)
 }
 
 #endif
-
