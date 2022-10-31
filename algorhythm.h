@@ -106,21 +106,33 @@ class slidePuzzle {
             }
         }
 
-        slidePuzzle goUp(slidePuzzle my_puzzle) 
+        slidePuzzle goUp(slidePuzzle uPuzzle) 
         {
-			
+		if(uPuzzle.zero.first != 0) //makes sure that zero is not already in top row
+            {
+                string temp = uPuzzle.puzzle.at(uPuzzle.zero.first - 1).at(uPuzzle.zero.second); //creates a temp for value directly above zero
+                uPuzzle.puzzle.at(uPuzzle.zero.first - 1).at(uPuzzle.zero.second) = "0"; //moves 0 up
+                uPuzzle.puzzle.at(uPuzzle.zero.first).at(uPuzzle.zero.second) = temp; //moves temp value down
+                uPuzzle.zero.first = uPuzzle.zero.first - 1; //updates the recorded position of zero
+            }
+            
+            return uPuzzle;
+
         }
-        slidePuzzle goDown(slidePuzzle my_puzzle) 
+        slidePuzzle goDown(slidePuzzle dPuzzle) 
         {
 			
+			return dPuzzle;
         }
-        slidePuzzle goLeft(slidePuzzle my_puzzle) 
+        slidePuzzle goLeft(slidePuzzle lPuzzle) 
         {
 			
+			return lPuzzle;
         }
-        slidePuzzle goRight(slidePuzzle my_puzzle) 
+        slidePuzzle goRight(slidePuzzle rPuzzle) 
         {
 			
+			return rPuzzle;
         }
 
         void allCosts(const int &algorithm) 
