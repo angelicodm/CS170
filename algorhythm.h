@@ -108,7 +108,7 @@ class slidePuzzle {
 
         slidePuzzle goUp(slidePuzzle uPuzzle) 
         {
-		if(uPuzzle.zero.first != 0) //makes sure that zero is not already in top row
+			if(uPuzzle.zero.first != 0) //makes sure that zero is not already in top row
             {
                 string temp = uPuzzle.puzzle.at(uPuzzle.zero.first - 1).at(uPuzzle.zero.second); //creates a temp for value directly above zero
                 uPuzzle.puzzle.at(uPuzzle.zero.first - 1).at(uPuzzle.zero.second) = "0"; //moves 0 up
@@ -121,11 +121,26 @@ class slidePuzzle {
         }
         slidePuzzle goDown(slidePuzzle dPuzzle) 
         {
+			if(dPuzzle.zero.first != dPuzzle.puzzle.size() - 1) //makes sure that zero is not already in the bottom row
+			{
+				string temp = dPuzzle.puzzle.at(dPuzzle.zero.first + 1).at(dPuzzle.zero.second); //creates temp value for value directly BELOW zero
+				dPuzzle.puzzle.at(dPuzzle.zero.first + 1).at(dPuzzle.zero.second) = "0"; //moves zero down
+				dPuzzle.puzzle.at(dPuzzle.zero.first).at(dPuzzle.zero.second) = temp; //moves temp to where zero was (up)
+				dPuzzle.zero.first = dPuzzle.zero.first + 1; //updates the current position of zero
+			}
 			
 			return dPuzzle;
         }
         slidePuzzle goLeft(slidePuzzle lPuzzle) 
         {
+			if (lPuzzle.zero.second != 0) 
+            {
+                string temp = lPuzzle.puzzle.at(my_puzzle.zero.first).at(lPuzzle.zero.second - 1);
+                lPuzzle.puzzle.at(lPuzzle.zero.first).at(lPuzzle.zero.second - 1) = "0";
+                lPuzzle.puzzle.at(lPuzzle.zero.first).at(lPuzzle.zero.second) = temp;
+                lPuzzle.zero.second = lPuzzle.zero.second - 1;
+            }
+
 			
 			return lPuzzle;
         }
@@ -160,9 +175,10 @@ void expand(slidePuzzle currentNode, const int &algorithm)
     
 }
 
-bool isGoal(const slidePuzzle &my_puzzle) 
+bool isGoal(const slidePuzzle &currentNode) 
 {
 	
 }
 
 #endif
+
