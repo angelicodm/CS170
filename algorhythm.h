@@ -8,12 +8,12 @@
 using namespace std;
 
 class slidePuzzle {
-    private:
-        vector<vector<string> > puzzle;
+    
+    public:
+		vector<vector<string> > puzzle;
         int costToState; // g(n)
         int heuristic; // h(n) aka distance to goal state
         pair<int, int> zero; //this tracks the zero/blank space position with <row, column>
-    public:
         slidePuzzle() //default constructor
         {
             costToState = 0; 
@@ -43,26 +43,11 @@ class slidePuzzle {
             }
         }
 
-        vector<vector<string> > getNode() const //used to get current sequence of numbers
-        {
-            return this->puzzle;
-        }
-        
-        int getG() const //used to get costToState or g(n) 
-        {
-            return this->costToState;
-        }
-        int getH() const //used to get heuristic or h(n)
-        {
-            return this->heuristic;
-        }
-
         //the simpler algorithm to calculate cost as we only check whether each individual tile is correct or not
         int misplacedTileCost() 
         {
             int mtCost = 0;
             vector<int> numberSequence;
-            
             for (int i = 0; i < puzzle.size(); ++i) //these nested for loops convert the puzzle into integers for comparison
             {
                 for (int j = 0; j < puzzle.at(i).size(); ++j) 
@@ -88,7 +73,7 @@ class slidePuzzle {
         int manhattanDistanceCost() 
         {
             
-        }
+		}
 
         
         pair<int, int> findZero() //used to find position of zero/blank space in matrix
@@ -105,7 +90,7 @@ class slidePuzzle {
                 }
             }
         }
-
+        
         slidePuzzle goUp(slidePuzzle uPuzzle) 
         {
 			if(uPuzzle.zero.first != 0) //makes sure that zero is not already in top row
@@ -119,6 +104,7 @@ class slidePuzzle {
             return uPuzzle;
 
         }
+
         slidePuzzle goDown(slidePuzzle dPuzzle) 
         {
 			if(dPuzzle.zero.first != dPuzzle.puzzle.size() - 1) //makes sure that zero is not already in the bottom row// NOTE: could be set to 3 but having it as this allows for easier adjustment for bigger puzzles
@@ -131,6 +117,7 @@ class slidePuzzle {
 			
 			return dPuzzle;
         }
+        
         slidePuzzle goLeft(slidePuzzle lPuzzle) 
         {
 			if (lPuzzle.zero.second != 0) //makes sure that zero is not already in the leftmost position
@@ -144,6 +131,7 @@ class slidePuzzle {
 			
 			return lPuzzle;
         }
+        
         slidePuzzle goRight(slidePuzzle rPuzzle) 
         {
 			if(rPuzzle.zero.second != rPuzzle.puzzle.size() - 1) //makes sure that zero is not in rightmost position
@@ -157,6 +145,7 @@ class slidePuzzle {
 			return rPuzzle;
         }
 
+
         void allCosts(const int &algorithm) 
         {
             this->costToState += 1;
@@ -164,7 +153,7 @@ class slidePuzzle {
             {
                 this->heuristic = 0;
             }
-            else if(algorithm == 2) 
+            else if (algorithm == 2) 
             {
                 this->heuristic = manhattanDistanceCost();
             }
@@ -174,17 +163,76 @@ class slidePuzzle {
             }
         }
 
-        
+        //needed for priority_queue to work 
+        bool operator<(const slidePuzzle &lhs) const 
+        {
+            return !((this->costToState + this->heuristic) < (lhs.costToState + lhs.heuristic));
+        }
 };
 
-void expand(slidePuzzle currentNode, const int &algorithm) 
+string conversion(vector<vector<string>> currentNode) //turns the entire number sequence into a large single string
 {
+    string nodeString;
+    for (int i = 0; i < currentNode.size(); ++i) {
+        for (int j = 0; j < currentNode.at(i).size(); ++j) {
+            nodeString.append(currentNode.at(i).at(j));
+        }
+    }
+    return nodeString;
+}
+
+void puzzleTracker(map<string, bool> &tracker, slidePuzzle currentNode) //records each number sequence that is encountered/expanded to avoid repeat states
+{
+	string nodeString = conversion(currentNode.puzzle);
+	tracker[nodeString] = true;
+}
+
+void expand(slidePuzzle currentNode, priority_queue<slidePuzzle> &nodes, map<string, bool> &tracker, const int &algorithm) 
+{
+    slidePuzzle puzzleU = currentNode.goUp(currentNode);
+    slidePuzzle puzzleD = currentNode.goDown(currentNode);
+    slidePuzzle puzzleL = currentNode.goLeft(currentNode);
+    slidePuzzle puzzleR = currentNode.goRight(currentNode);
     
+    string stringU = conversion(puzzleU.puzzle); //converts number sequence into a single readable string
+    string stringD = conversion(puzzleD.puzzle);
+    string stringL = conversion(puzzleL.puzzle);
+    string stringR = conversion(puzzleR.puzzle);
+
+    puzzleTracker(tracker, currentNode); //records current number sequence
+    
+    if (tracker[stringU] == false) //if false then this is a new state
+    {
+        puzzleU.allCosts(algorithm); //updates costs for specific node
+        nodes.push(puzzleU); //adds specific node to the queue
+    }
+    if (tracker[stringD] == false) //if false then this is a new state
+    {
+        puzzleD.allCosts(algorithm); //updates costs for specific node
+        nodes.push(puzzleD); //adds specific node to the queue
+    }
+    if (tracker[stringL] == false) //if false then this is a new state
+    {
+        puzzleL.allCosts(algorithm); //updates costs for specific node
+        nodes.push(puzzleL); //adds specific node to the queue
+    }
+    if (tracker[stringR] == false) //if false then this is a new state
+    {
+        puzzleR.allCosts(algorithm); //updates costs for specific node
+        nodes.push(puzzleR); //adds specific node to the queue
+    }
 }
 
 bool isGoal(const slidePuzzle &currentNode) 
 {
-	
+	bool result = false;
+    string goal = "123456780";
+    string nodeString = conversion(currentNode.puzzle);
+    if (goal == nodeString) 
+    {
+        result = true;
+    }
+    return result;
 }
 
 #endif
