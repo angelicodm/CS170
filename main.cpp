@@ -78,7 +78,8 @@ int main()
 
     slidePuzzle my_puzzle(numberSequence);
     priority_queue <slidePuzzle> nodes; //should sort each node
-    map<string, bool> tracker; //used to record each iteration of puzzle to check for repeats
+    map<string, bool> repeats;
+    
     nodes.push(my_puzzle); //creates the data structure of nodes
     
     int queueSize = nodes.size();
@@ -98,23 +99,22 @@ int main()
         {
             cout << "Solution found! " << endl;
             currentNode.printPuzzle();
-            cout << "Solution depth was " << currentNode.costToState << endl;
+            cout << "Solution depth was " << currentNode.getG() << endl;
             cout << "Number of nodes expanded: " << nodesExpanded << endl;
             cout << "Max queue size: " << queueSize << endl;
             
             return 0;
         }
         
-        cout << "The best state to is expand with a g(n) = " << currentNode.costToState << " and h(n) = " << currentNode.heuristic << " is... " << endl;
+        cout << "The best state to is expand with a g(n) = " << currentNode.getG() << " and h(n) = " << currentNode.getH() << " is... " << endl;
         
         
         currentNode.printPuzzle();
-        expand(currentNode, nodes, tracker, algorithm);// EXPAND function: creates children based off of currentNode and selected algorithm ;if not goal state, creates all of current nodes children
+        expand(currentNode, nodes, repeats, algorithm); //if not goal state, creates all of current nodes children
         nodesExpanded++; //updates nodesExpanded and returns to top of the loop
         
     }
-    
-    cout << "No solution could be found." << endl;
+    cout << "No solution found" << endl;
     cout << "Number of nodes expanded: " << nodesExpanded << endl;
     cout << "Max queue size: " << queueSize << endl;
     return 0;
