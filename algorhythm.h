@@ -72,7 +72,48 @@ class slidePuzzle {
 		//the more complex algorithm to calculate cost
         int manhattanDistanceCost() 
         {
+            int currentNum = 1; //compare values in puzzle to this beginning with 1 and so on
+            int mdCost = 0;
+            int lastPos = puzzle.size() - 1; //used to compare to 0;
+            string stringNum;
             
+            for(int i = 0; i < puzzle.size(); i++) // iterates through the 'rows'
+            {
+				for(int j = 0; j < puzzle.size(); j++) //iterates through columns
+				{
+					stringNum = to_string(currentNum);
+					if(puzzle.at(i).at(j) != stringNum) //if the two values don't match then we need to find where it should go/how it should move
+					{
+						for(int x = 0; x < puzzle.size(); x++)//iterates through rows again
+						{
+							for(int y = 0; y < puzzle.size(); y++) //iterates through columns
+							{
+								if(stringNum == puzzle.at(x).at(y)) //at currentNum's position
+								{
+									mdCost += abs(i - x) + abs(j - y); //in order to find cost of distance, subtract where it should be by where it currently is
+									//manhattan distance considers cost of every misplaced tile, which is why it is necessary to add them all together
+								}
+							}
+						}
+					}
+					
+					currentNum++;
+				}
+			}
+			
+			//finding the cost for zero is different as it needs to be in the last position for both the row and column
+			if(puzzle.at(lastPos).at(lastPos) != "0") //check last position for row and column as thats where it should be
+			{
+				for(int i = 0; i < puzzle.size(); i++) //iterate through rows
+				{
+					for(int j = 0; j < puzzle.size(); j++) //iterate through columns
+					{
+						mdCost += abs(lastPos - i) + abs(lastPos - j);
+					}
+				}
+			}
+			
+			return mdCost;
 		}
 
         
@@ -166,7 +207,7 @@ class slidePuzzle {
         //needed for priority_queue to work 
         bool operator<(const slidePuzzle &lhs) const 
         {
-            return !((this->costToState + this->heuristic) < (lhs.costToState + lhs.heuristic));
+            return !((this->costToState + this->heuristic) < (lhs.costToState + lhs.heuristic)); //prioritizes lowest overall cost [f(n)]
         }
 };
 
@@ -194,7 +235,7 @@ void expand(slidePuzzle currentNode, priority_queue<slidePuzzle> &nodes, map<str
     slidePuzzle puzzleL = currentNode.goLeft(currentNode);
     slidePuzzle puzzleR = currentNode.goRight(currentNode);
     
-    string stringU = conversion(puzzleU.puzzle); //converts number sequence into a single readable string
+    string stringU = conversion(puzzleU.puzzle); //converts number sequence into a single readable string 
     string stringD = conversion(puzzleD.puzzle);
     string stringL = conversion(puzzleL.puzzle);
     string stringR = conversion(puzzleR.puzzle);
@@ -203,22 +244,22 @@ void expand(slidePuzzle currentNode, priority_queue<slidePuzzle> &nodes, map<str
     
     if (tracker[stringU] == false) //if false then this is a new state
     {
-        puzzleU.allCosts(algorithm); //updates costs for specific node
+        puzzleU.allCosts(algorithm); //updates cost for specific node
         nodes.push(puzzleU); //adds specific node to the queue
     }
     if (tracker[stringD] == false) //if false then this is a new state
     {
-        puzzleD.allCosts(algorithm); //updates costs for specific node
+        puzzleD.allCosts(algorithm); //updates cost for specific node
         nodes.push(puzzleD); //adds specific node to the queue
     }
     if (tracker[stringL] == false) //if false then this is a new state
     {
-        puzzleL.allCosts(algorithm); //updates costs for specific node
+        puzzleL.allCosts(algorithm); //updates cost for specific node
         nodes.push(puzzleL); //adds specific node to the queue
     }
     if (tracker[stringR] == false) //if false then this is a new state
     {
-        puzzleR.allCosts(algorithm); //updates costs for specific node
+        puzzleR.allCosts(algorithm); //updates cost for specific node
         nodes.push(puzzleR); //adds specific node to the queue
     }
 }
